@@ -23,7 +23,8 @@ export default function Dashboard() {
     setLoading(true);
     axiosClient.get("/api/books")
       .then(({ data }) => {
-        setBooks(data);
+        // Defensive: ensure books is always an array
+        setBooks(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(err => {
@@ -31,6 +32,7 @@ export default function Dashboard() {
         if (response && response.status === 422) {
           setErrors(response.data.errors);
         }
+        setBooks([]); // Defensive: set to empty array on error
         setLoading(false);
       });
   };
@@ -312,7 +314,7 @@ export default function Dashboard() {
             {books.length === 0 && (
               <tr>
                 <td colSpan={5} style={{ padding: "1rem", textAlign: "center", color: "#777" }}>
-                  Notest found.
+                  No books found.
                 </td>
               </tr>
             )}
