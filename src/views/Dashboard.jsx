@@ -23,8 +23,14 @@ export default function Dashboard() {
     setLoading(true);
     axiosClient.get("/api/books")
       .then(({ data }) => {
-        // Defensive: ensure books is always an array
-        setBooks(Array.isArray(data) ? data : []);
+        // Handle both array and object with data property
+        let booksArray = [];
+        if (Array.isArray(data)) {
+          booksArray = data;
+        } else if (data && Array.isArray(data.data)) {
+          booksArray = data.data;
+        }
+        setBooks(booksArray);
         setLoading(false);
       })
       .catch(err => {
